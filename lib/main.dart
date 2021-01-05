@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
 
   AnimationController animationController;
-  Animation animation;
+  Animation animation, delayed, soMuchDelayed;
 
   @override
   void initState() {
@@ -26,6 +26,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       parent: animationController,
       curve: Curves.fastOutSlowIn
     ));
+
+
+    delayed = Tween(begin: -1.0, end: 0.0).animate(CurvedAnimation(
+        parent: animationController,
+        curve: Interval(0.5, 1.0, curve:Curves.fastOutSlowIn)
+    ));
+
+    soMuchDelayed = Tween(begin: -1.0, end: 0.0).animate(CurvedAnimation(
+        parent: animationController,
+        curve: Interval(0.8, 1.0, curve:Curves.fastOutSlowIn)
+    ));
+
 
     animationController.forward();
 
@@ -40,21 +52,65 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       return Scaffold(
         backgroundColor: Colors.grey,
         appBar: new AppBar(title: Text('Curved Animation'), backgroundColor: Colors.grey, elevation: 0.0,),
-        body: Transform(
-          transform: Matrix4.translationValues(animation.value*width, 0.0, 0.0),
-          child: Center(child: Container(
-            padding: EdgeInsets.all(20),
-            height: 90,
-            width: 250,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              color: Colors.blueAccent[700]
-            ),
-            child: Text('Hello, I am curved animation', style: TextStyle(
-              color: Colors.white,
-              fontSize: 20, wordSpacing: 3, fontWeight: FontWeight.bold
-            ),),
-          ),),
+        body: Align(
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              Transform(
+                transform: Matrix4.translationValues(animation.value*width, 0.0, 0.0),
+                child: Center(child: Container(
+                  padding: EdgeInsets.all(20),
+                  height: 90,
+                  width: 250,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.blueAccent[700]
+                  ),
+                  child: Text('Hello, I am curved animation', style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20, wordSpacing: 3, fontWeight: FontWeight.bold
+                  ),),
+                ),),
+              ),
+
+              Transform(
+                transform: Matrix4.translationValues(delayed.value*width, 0.0, 0.0),
+                child: Center(child: Container(
+                  padding: EdgeInsets.all(20),
+                  height: 90,
+                  width: 250,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.blueAccent[700]
+                  ),
+                  child: Text('Hello, I am delayed curved animation', style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20, wordSpacing: 3, fontWeight: FontWeight.bold
+                  ),),
+                ),),
+              ),
+
+              Transform(
+                transform: Matrix4.translationValues(soMuchDelayed.value*width, 0.0, 0.0),
+                child: Center(child: Container(
+                  padding: EdgeInsets.all(20),
+                  height: 90,
+                  width: 250,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.blueAccent[700]
+                  ),
+                  child: Text('Hello, I am more delayed curved animation', style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20, wordSpacing: 3, fontWeight: FontWeight.bold
+                  ),),
+                ),),
+              ),
+
+            ],
+          )
+
+
         ),
       );
     });
