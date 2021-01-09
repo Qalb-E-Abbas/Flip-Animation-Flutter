@@ -1,120 +1,86 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: HomePage(),
-  ));
-}
-class HomePage extends StatefulWidget {
+void main() => runApp(new MyApp());
+
+class MyApp extends StatelessWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: new MyHomePage(),
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin{
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => new _MyHomePageState();
+}
 
-
-  AnimationController animationController;
-  Animation animation, delayed, soMuchDelayed;
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation flip_anim;
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
 
-    animationController = AnimationController(duration: Duration(seconds: 3), vsync: this);
-    animation = Tween(begin: -1.0, end: 0.0).animate(CurvedAnimation(
-      parent: animationController,
-      curve: Curves.fastOutSlowIn
-    ));
+    controller = AnimationController(duration: Duration(seconds: 5), vsync: this);
 
-
-    delayed = Tween(begin: -1.0, end: 0.0).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Interval(0.5, 1.0, curve:Curves.fastOutSlowIn)
-    ));
-
-    soMuchDelayed = Tween(begin: -1.0, end: 0.0).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Interval(0.8, 1.0, curve:Curves.fastOutSlowIn)
-    ));
-
-
-    animationController.forward();
-
+    flip_anim = Tween(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+        parent: controller,
+            curve: Interval(0.0, 0.5, curve: Curves.linear)));
   }
-
 
   @override
   Widget build(BuildContext context) {
-
-    final width = MediaQuery.of(context).size.width;
-    return AnimatedBuilder(animation: animationController, builder: (BuildContext context, Widget child){
-      return Scaffold(
-        backgroundColor: Colors.grey,
-        appBar: new AppBar(title: Text('Curved Animation'), backgroundColor: Colors.grey, elevation: 0.0,),
-        body: Align(
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Transform(
-                transform: Matrix4.translationValues(animation.value*width, 0.0, 0.0),
-                child: Center(child: Container(
-                  padding: EdgeInsets.all(20),
-                  height: 90,
-                  width: 250,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.blueAccent[700]
-                  ),
-                  child: Text('Hello, I am curved animation', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20, wordSpacing: 3, fontWeight: FontWeight.bold
-                  ),),
-                ),),
-              ),
-
-              Transform(
-                transform: Matrix4.translationValues(delayed.value*width, 0.0, 0.0),
-                child: Center(child: Container(
-                  padding: EdgeInsets.all(20),
-                  height: 90,
-                  width: 250,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.blueAccent[700]
-                  ),
-                  child: Text('Hello, I am delayed curved animation', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20, wordSpacing: 3, fontWeight: FontWeight.bold
-                  ),),
-                ),),
-              ),
-
-              Transform(
-                transform: Matrix4.translationValues(soMuchDelayed.value*width, 0.0, 0.0),
-                child: Center(child: Container(
-                  padding: EdgeInsets.all(20),
-                  height: 90,
-                  width: 250,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.blueAccent[700]
-                  ),
-                  child: Text('Hello, I am more delayed curved animation', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20, wordSpacing: 3, fontWeight: FontWeight.bold
-                  ),),
-                ),),
-              ),
-
-            ],
-          )
-
-
+    return new Scaffold(
+        appBar: new AppBar(
+          title: new Text('Flip Animation'),
         ),
-      );
-    });
+        body: AnimatedBuilder(
+            animation: controller,
+            builder: (BuildContext context, Widget child) {
+              return Center(
+
+                child: InkWell(
+                  onTap: () {
+                    controller.repeat();
+                  },
+                  child: Container(
+                    height: 200.0,
+                    width: 200.0,
+                    child:
+                    Transform(
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, 0.005)
+                        ..rotateY(2 * pi * flip_anim.value),
+                      alignment: Alignment.center,
+                      child: Container(
+                          height: 100.0,
+                          width: 100.0,
+                          color: Colors.green.withOpacity(0.2),
+                          child: RotationTransition(
+                            turns: flip_anim,
+                            child: Center(
+                              child: Text('Click To Flip',
+                                  style: TextStyle(
+                                      fontSize: 25.0,
+                                      fontWeight: FontWeight.bold
+                                  )
+                              ),
+                            ),
+                          )
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }));
   }
 }
-
-
